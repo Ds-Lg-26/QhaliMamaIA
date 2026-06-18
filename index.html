@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QhaliMama IA - Inicio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { brand: { 50: '#f0fdfa', 100: '#ccfbf1', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e', 900: '#115e59' }, accent: { light: '#fdf2f8', medium: '#f472b6', dark: '#db2777' } } } } }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+    <!-- MENÚ SUPERIOR -->
+    <header class="fixed top-0 left-0 w-full bg-white/85 backdrop-blur-md shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-brand-600 to-accent-medium flex items-center justify-center text-white shadow-md">
+                        <i class="fa-solid fa-baby-carriage text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-2xl font-bold tracking-tight text-brand-700">Qhali<span class="text-accent-dark">Mama</span></span>
+                        <span class="block text-[9px] uppercase tracking-widest text-slate-500 font-semibold">Inteligencia Artificial</span>
+                    </div>
+                </div>
+                <nav class="hidden md:flex space-x-8 text-sm font-medium">
+                    <a href="index.html" class="text-brand-600 font-bold border-b-2 border-brand-600 pb-1">Inicio</a>
+                    <a href="nosotros.html" class="text-slate-600 hover:text-brand-600 transition">Nosotros</a>
+                    <a href="servicios.html" class="text-slate-600 hover:text-brand-600 transition">Servicios IA</a>
+                    <a href="contactos.html" class="text-slate-600 hover:text-brand-600 transition">Contactos</a>
+                </nav>
+                <div class="hidden lg:flex">
+                    <a href="servicios.html" class="px-5 py-2.5 text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-full shadow transition-all glow-btn flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Probar Demo IA
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION (Madre Gestante) -->
+    <section class="pt-32 pb-20 gradient-bg overflow-hidden min-h-screen flex items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-100 text-brand-700 text-xs font-semibold uppercase">
+                        <i class="fa-solid fa-microchip"></i> Innovación Médica Peruanas
+                    </div>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-tight">
+                        Cuidado Inteligente para <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-accent-dark">Mamá y Bebé</span>
+                    </h1>
+                    <p class="text-lg text-slate-600 max-w-xl mx-auto lg:mx-0">
+                        Estrategia de prevención médica potenciada por Inteligencia Artificial para monitorear y mitigar oportunamente riesgos metabólicos durante el embarazo.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <a href="servicios.html" class="px-8 py-4 text-sm font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-full shadow-lg transition text-center glow-btn">
+                            <i class="fa-solid fa-qrcode mr-2"></i> Ir al Escáner Nutricional
+                        </a>
+                        <a href="nosotros.html" class="px-8 py-4 text-sm font-semibold text-slate-700 bg-white hover:bg-slate-100 rounded-full shadow border border-slate-200 transition text-center">
+                            Ver Marco Científico
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Ilustración Madre Gestante -->
+                <div class="lg:col-span-5 flex justify-center relative">
+                    <div class="absolute -inset-1 rounded-full bg-gradient-to-tr from-brand-500 to-accent-medium opacity-20 blur-2xl max-w-sm"></div>
+                    <div class="relative bg-white/50 border border-white p-4 rounded-3xl shadow-xl backdrop-blur-sm w-full max-w-sm pulse-slow">
+                        <svg viewBox="0 0 400 450" class="w-full h-auto rounded-2xl bg-gradient-to-b from-brand-50 to-pink-50">
+                            <circle cx="200" cy="225" r="160" fill="none" stroke="url(#tg)" stroke-width="2" stroke-dasharray="5 5"/>
+                            <defs>
+                                <linearGradient id="tg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0d9488"/><stop offset="100%" stop-color="#db2777"/></linearGradient>
+                                <linearGradient id="sk" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffedd5"/><stop offset="100%" stop-color="#fed7aa"/></linearGradient>
+                                <linearGradient id="ds" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#14b8a6"/><stop offset="100%" stop-color="#0d9488"/></linearGradient>
+                            </defs>
+                            <circle cx="200" cy="240" r="45" fill="none" stroke="#14b8a6" stroke-width="2" opacity="0.6"/>
+                            <path d="M 170 110 C 150 110, 145 150, 150 180" fill="#312e81"/>
+                            <circle cx="185" cy="135" r="25" fill="url(#sk)"/>
+                            <path d="M 180 155 L 180 175 L 195 175 Z" fill="url(#sk)"/>
+                            <path d="M 185 110 C 210 110, 215 130, 205 145 Z" fill="#1e1b4b"/>
+                            <path d="M 180 175 C 160 210, 140 240, 145 280 C 150 320, 170 370, 200 380 C 225 385, 255 350, 260 300 C 265 250, 220 220, 200 175 Z" fill="url(#ds)"/>
+                            <path d="M 175 175 C 160 210, 175 250, 200 270" fill="none" stroke="url(#sk)" stroke-width="12" stroke-linecap="round"/>
+                            <path d="M 197 135 Q 199 137, 197 139" fill="none" stroke="#312e81" stroke-width="1.5"/>
+                            <text x="200" y="420" text-anchor="middle" fill="#0f766e" font-size="14" font-weight="bold">QhaliMama IA</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-slate-900 text-slate-500 text-center py-6 text-xs border-t border-slate-800">
+        &copy; 2026 QhaliMama IA. Todos los derechos reservados.
+    </footer>
+</body>
+</html>

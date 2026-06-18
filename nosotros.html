@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QhaliMama IA - Nosotros</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { brand: { 50: '#f0fdfa', 100: '#ccfbf1', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e', 900: '#115e59' }, accent: { light: '#fdf2f8', medium: '#f472b6', dark: '#db2777' } } } } }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+    <!-- MENÚ SUPERIOR -->
+    <header class="fixed top-0 left-0 w-full bg-white/85 backdrop-blur-md shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-brand-600 to-accent-medium flex items-center justify-center text-white shadow-md">
+                        <i class="fa-solid fa-baby-carriage text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-brand-700">Qhali<span class="text-accent-dark">Mama</span></span>
+                </div>
+                <nav class="hidden md:flex space-x-8 text-sm font-medium">
+                    <a href="index.html" class="text-slate-600 hover:text-brand-600 transition">Inicio</a>
+                    <a href="nosotros.html" class="text-brand-600 font-bold border-b-2 border-brand-600 pb-1">Nosotros</a>
+                    <a href="servicios.html" class="text-slate-600 hover:text-brand-600 transition">Servicios IA</a>
+                    <a href="contactos.html" class="text-slate-600 hover:text-brand-600 transition">Contactos</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENIDO NOSOTROS -->
+    <section class="pt-32 pb-20 max-w-5xl mx-auto px-4 sm:px-6">
+        <div class="text-center mb-12">
+            <span class="text-brand-600 font-bold tracking-widest text-xs uppercase block mb-2"><i class="fa-solid fa-graduation-cap"></i> Marco de Innovación Científica</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Prevención Integral de Riesgos Clínicos</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+            <!-- Autoras -->
+            <div class="bg-white border border-slate-200/60 p-6 rounded-2xl shadow-sm space-y-4">
+                <h3 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-user-doctor text-brand-600 mr-2"></i>Equipo de Autores</h3>
+                <p class="text-xs text-slate-500 leading-relaxed">Investigadoras de la Universidad Privada del Norte (UPN) Cajamarca comprometidas con el desarrollo tecnológico obstétrico:</p>
+                <div class="space-y-2 pt-2">
+                    <div class="p-3 bg-slate-50 rounded-xl text-xs font-semibold">Liseth Guevara-Silva <span class="block font-normal text-[10px] text-slate-400">Cod: N00470199</span></div>
+                    <div class="p-3 bg-slate-50 rounded-xl text-xs font-semibold">Diana X. Saucedo-Quispe <span class="block font-normal text-[10px] text-slate-400">Cod: N00533955</span></div>
+                </div>
+            </div>
+
+            <!-- Criterio Clínico -->
+            <div class="bg-gradient-to-b from-brand-900 to-brand-700 text-white p-6 rounded-2xl shadow-md md:col-span-2 space-y-4">
+                <h3 class="text-lg font-bold"><i class="fa-solid fa-circle-check text-accent-medium mr-2"></i>Estándares Científicos de Salud (OMS)</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs leading-relaxed">
+                    <div>
+                        <span class="font-bold text-accent-light block mb-1">🩸 Prevención de Anemia</span>
+                        <p class="text-brand-100">Evaluación de puntos de corte de hemoglobina por trimestre de gestación y niveles de ferritina sérica bajo normativas técnicas vigentes del MINSA.</p>
+                    </div>
+                    <div>
+                        <span class="font-bold text-accent-light block mb-1">📈 Control Glucémico</span>
+                        <p class="text-brand-100">Detección temprana de hiperglucemia intermedia y curvas de tolerancia para reducir el índice de diabetes gestacional y complicaciones maternas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-slate-900 text-slate-500 text-center py-6 text-xs">
+        &copy; 2026 QhaliMama IA. UPN Cajamarca, Perú.
+    </footer>
+</body>
+</html>
