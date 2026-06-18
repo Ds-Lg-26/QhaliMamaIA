@@ -6,7 +6,16 @@
     <title>QhaliMama IA - Servicios Inteligentes</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = { theme: { extend: { colors: { brand: { 50: '#f0fdfa', 100: '#ccfbf1', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e', 900: '#115e59' }, accent: { light: '#fdf2f8', medium: '#f472b6', dark: '#db2777' } } } } }
+        tailwind.config = { 
+            theme: { 
+                extend: { 
+                    colors: { 
+                        brand: { 50: '#f0fdfa', 100: '#ccfbf1', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e', 900: '#115e59' }, 
+                        accent: { light: '#fdf2f8', medium: '#f472b6', dark: '#db2777' } 
+                    } 
+                } 
+            } 
+        }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
@@ -36,102 +45,156 @@
     <!-- SECCIÓN INTERACTIVA DE ESCÁNER IA -->
     <main class="pt-32 pb-20 max-w-6xl mx-auto px-4 sm:px-6">
         <div class="text-center mb-10">
-            <h2 class="text-3xl font-extrabold text-slate-900">Módulos Inteligentes de Diagnóstico</h2>
-            <p class="text-slate-500 text-sm mt-2">Interactúa con los prototipos lógicos del sistema integrado de software.</p>
+            <span class="text-brand-600 font-bold tracking-widest text-xs uppercase block mb-1">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Visión por Computadora Real
+            </span>
+            <h2 class="text-3xl font-extrabold text-slate-900">Diagnóstico Nutricional por Imagen</h2>
+            <p class="text-slate-500 text-sm mt-2 max-w-2xl mx-auto">
+                Sube una imagen o toma una foto de tu desayuno, almuerzo o cena. Nuestro algoritmo clínico QhaliMama evaluará los macronutrientes, el índice glucémico y la idoneidad para tu trimestre de gestación.
+            </p>
+        </div>
+
+        <!-- Alerta de Notificación del Sistema -->
+        <div id="notification-bar" class="hidden max-w-3xl mx-auto mb-6 p-4 rounded-xl text-xs flex items-center gap-3 shadow-sm transition-all duration-300">
+            <i id="notification-icon" class="fa-solid text-base"></i>
+            <span id="notification-text"></span>
         </div>
 
         <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden grid grid-cols-1 lg:grid-cols-12 mb-12">
-            <!-- Interfaz Escáner Ficticio -->
-            <div class="lg:col-span-5 bg-slate-900 p-6 flex flex-col justify-between min-h-[350px] relative">
+            
+            <!-- Columna Izquierda: Escáner y Carga de Fotos -->
+            <div class="lg:col-span-5 bg-slate-900 p-6 flex flex-col justify-between min-h-[420px] relative">
                 <div class="flex items-center justify-between text-white text-[11px]">
-                    <span class="bg-brand-600 px-3 py-1 rounded-full font-semibold uppercase animate-pulse">Cámara Activa</span>
-                    <span class="text-slate-400"><i class="fa-solid fa-wifi text-emerald-500 mr-1"></i> Red Operativa</span>
+                    <span class="bg-brand-600 px-3 py-1 rounded-full font-semibold uppercase animate-pulse">Cámara / Archivo</span>
+                    <span class="text-slate-400"><i class="fa-solid fa-brain text-brand-500 mr-1 animate-pulse"></i> Red Neuronal Lista</span>
                 </div>
-                <div class="relative my-4 mx-auto w-48 aspect-square rounded-2xl overflow-hidden border-2 border-brand-500 bg-slate-800 flex items-center justify-center">
-                    <div id="scanner-visual" class="text-5xl">🍛</div>
-                    <div class="absolute left-0 w-full h-1 bg-brand-500 shadow-[0_0_15px_#14b8a6] scanning-line"></div>
+
+                <!-- Contenedor Visual de la Imagen -->
+                <div class="relative my-6 mx-auto w-full max-w-[240px] aspect-square rounded-2xl overflow-hidden border-2 border-brand-500 bg-slate-800 flex flex-col items-center justify-center text-center p-4">
+                    <img id="image-preview" src="" alt="Vista previa de comida" class="absolute inset-0 w-full h-full object-cover hidden z-0">
+                    
+                    <div id="upload-placeholder" class="z-10 space-y-3 cursor-pointer">
+                        <div class="w-14 h-14 rounded-full bg-slate-700/50 flex items-center justify-center text-brand-500 mx-auto border border-brand-500/30">
+                            <i class="fa-solid fa-camera text-2xl"></i>
+                        </div>
+                        <p class="text-xs text-slate-300 font-medium">Haz clic para tomar foto o seleccionar archivo</p>
+                    </div>
+
+                    <!-- Línea de escaneo láser (Visible durante procesamiento) -->
+                    <div id="laser-line" class="absolute left-0 w-full h-1 bg-brand-500 shadow-[0_0_15px_#14b8a6] scanning-line hidden z-10"></div>
+                    
+                    <!-- Overlay de carga -->
+                    <div id="loading-overlay" class="absolute inset-0 bg-slate-950/80 flex flex-col items-center justify-center gap-3 hidden z-20">
+                        <div class="spinner"></div>
+                        <span class="text-[11px] text-slate-300 font-bold uppercase tracking-wider animate-pulse">Analizando plato con IA...</span>
+                    </div>
                 </div>
-                <div class="space-y-1">
-                    <label class="block text-slate-300 text-[11px] font-bold uppercase">Trimestre del Embarazo</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button onclick="changeTrim(1)" id="b1" class="py-1 text-xs font-bold rounded-md bg-slate-800 text-slate-400">1º</button>
-                        <button onclick="changeTrim(2)" id="b2" class="py-1 text-xs font-bold rounded-md bg-brand-600 text-white">2º</button>
-                        <button onclick="changeTrim(3)" id="b3" class="py-1 text-xs font-bold rounded-md bg-slate-800 text-slate-400">3º</button>
+
+                <!-- Input File oculto para activar cámara/archivos -->
+                <input type="file" id="food-image-input" accept="image/*" class="hidden">
+
+                <!-- Botones de Acción de Imagen -->
+                <div class="space-y-3">
+                    <button onclick="triggerFileSelect()" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-upload"></i> Seleccionar o Tomar Foto
+                    </button>
+                    
+                    <div class="space-y-1">
+                        <label class="block text-slate-300 text-[10px] font-bold uppercase tracking-wide">Indica tu Trimestre Gestacional:</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="changeTrimestre(1)" id="btn-t1" class="py-1 text-xs font-bold rounded-md bg-slate-800 text-slate-400">1º Trim</button>
+                            <button onclick="changeTrimestre(2)" id="btn-t2" class="py-1 text-xs font-bold rounded-md bg-brand-600 text-white">2º Trim</button>
+                            <button onclick="changeTrimestre(3)" id="btn-t3" class="py-1 text-xs font-bold rounded-md bg-slate-800 text-slate-400">3º Trim</button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Resultados Dinámicos -->
-            <div class="lg:col-span-7 p-6 flex flex-col justify-between">
+            <!-- Columna Derecha: Reporte de IA -->
+            <div class="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-between">
                 <div>
-                    <div class="flex justify-between items-start border-b pb-3">
+                    <div class="flex flex-wrap justify-between items-start border-b pb-4 gap-2">
                         <div>
-                            <h3 id="f-title" class="text-xl font-bold text-slate-900">Lentejas con Pescado Frito</h3>
-                            <span class="text-xs text-brand-600 font-medium"><i class="fa-solid fa-microchip"></i> MobileNetV3 (94.2% confianza)</span>
+                            <h3 id="report-title" class="text-xl sm:text-2xl font-bold text-slate-900">Sube una foto para iniciar</h3>
+                            <span class="text-xs text-slate-400 block mt-1"><i class="fa-solid fa-robot"></i> Diagnóstico estructurado basado en OMS / MINSA Perú</span>
                         </div>
-                        <span id="f-sem" class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs">Adecuado</span>
+                        <span id="report-semaforo" class="px-3.5 py-1.5 rounded-full bg-slate-100 text-slate-500 font-bold text-xs uppercase tracking-wide">
+                            En Espera
+                        </span>
                     </div>
-                    <div class="grid grid-cols-3 gap-2 my-4 text-center">
-                        <div class="bg-slate-50 p-2 rounded-lg text-xs"><b class="block text-slate-500">Hierro</b><span id="f-iron">8.9 mg</span></div>
-                        <div class="bg-slate-50 p-2 rounded-lg text-xs"><b class="block text-slate-500">Calorías</b><span id="f-cal">540 kcal</span></div>
-                        <div class="bg-slate-50 p-2 rounded-lg text-xs"><b class="block text-slate-500">I. Glucémico</b><span id="f-gi">Bajo (35)</span></div>
+
+                    <!-- Rejilla de Indicadores de Nutrientes -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 my-6 text-center">
+                        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                            <span class="text-[10px] text-slate-400 block uppercase font-medium">Calorías Est.</span>
+                            <span id="report-calories" class="text-base font-bold text-slate-800">-- kcal</span>
+                        </div>
+                        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                            <span class="text-[10px] text-slate-400 block uppercase font-medium">Hierro (Fe)</span>
+                            <span id="report-iron" class="text-base font-bold text-slate-800">-- mg</span>
+                        </div>
+                        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                            <span class="text-[10px] text-slate-400 block uppercase font-medium">Ácido Fólico</span>
+                            <span id="report-folic" class="text-base font-bold text-slate-800">-- µg</span>
+                        </div>
+                        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                            <span class="text-[10px] text-slate-400 block uppercase font-medium">Índice Glucémico</span>
+                            <span id="report-gi" class="text-base font-bold text-slate-800">--</span>
+                        </div>
                     </div>
-                    <p id="f-advise" class="text-xs text-slate-600 bg-brand-50/50 border p-3 rounded-xl leading-relaxed">Excelente balance para el 2do trimestre. Aporta hierro indispensable para elevar los depósitos maternos de hemoglobina.</p>
+
+                    <!-- Caja de Consejo Personalizado -->
+                    <div class="p-4 rounded-xl bg-brand-50/50 border border-brand-100/60 leading-relaxed">
+                        <span class="text-[11px] font-bold text-brand-700 uppercase block mb-1"><i class="fa-solid fa-user-doctor"></i> Recomendación Obstétrica QhaliMama:</span>
+                        <p id="report-advice" class="text-xs text-slate-600">
+                            El análisis nutricional en tiempo real está listo para procesar tus alimentos de la canasta familiar y platos preparados. Sube una foto para calcular el balance ideal según tu semana de gestación.
+                        </p>
+                    </div>
                 </div>
-                <div class="mt-4 pt-3 border-t text-xs">
-                    <span class="block text-slate-400 mb-2 font-semibold">Simular Plato Local:</span>
-                    <div class="flex gap-2">
-                        <button onclick="simFood('lentejas')" class="px-3 py-1.5 bg-slate-200 rounded-md font-medium">🍛 Lentejas</button>
-                        <button onclick="simFood('torta')" class="px-3 py-1.5 bg-slate-200 rounded-md font-medium">🍰 Postre Alto IG</button>
+
+                <!-- Sección de Platos Preestablecidos de Demostración Local -->
+                <div class="mt-8 pt-4 border-t text-xs">
+                    <span class="block text-slate-400 mb-2 font-semibold">¿No tienes fotos a la mano? Prueba con estas de muestra:</span>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="demoPlato('lentejas')" class="px-3 py-2 bg-slate-100 hover:bg-brand-50 hover:text-brand-700 rounded-lg font-medium transition flex items-center gap-1.5">
+                            🍛 Lentejas con Pescado (Hierro Alto)
+                        </button>
+                        <button onclick="demoPlato('dulce')" class="px-3 py-2 bg-slate-100 hover:bg-brand-50 hover:text-brand-700 rounded-lg font-medium transition flex items-center gap-1.5">
+                            🍰 Postre Glaseado (Riesgo Glucemia)
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- MODULO DE ALERTAS METABÓLICAS -->
+        <!-- MÓDULO DE ALERTAS METABÓLICAS DE GLUCOSA -->
         <div class="bg-white border p-6 rounded-3xl shadow-sm max-w-3xl mx-auto">
-            <h3 class="text-lg font-bold text-slate-800 mb-4"><i class="fa-solid fa-heart-pulse text-rose-500 mr-2"></i>Simulador Clínico de Alertas Clínicas Rápidas</h3>
+            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-heart-pulse text-rose-500 animate-pulse"></i> Simulador Clínico de Alertas de Glucemia
+            </h3>
             <div class="space-y-4">
                 <div>
-                    <div class="flex justify-between text-xs font-bold mb-1"><span>Glucemia Capilar</span><span id="v-gl">95 mg/dL</span></div>
-                    <input type="range" id="s-gl" min="70" max="170" value="95" oninput="calcAlert()" class="w-full accent-brand-600">
+                    <div class="flex justify-between text-xs font-bold mb-1">
+                        <span>Glucemia Capilar de la Gestante</span>
+                        <span id="v-gl" class="text-brand-700 bg-brand-50 px-2.5 py-0.5 rounded-md font-extrabold">95 mg/dL</span>
+                    </div>
+                    <input type="range" id="s-gl" min="70" max="170" value="95" oninput="calcAlert()" class="w-full accent-brand-600 cursor-pointer">
                 </div>
                 <div id="alert-box" class="p-4 rounded-xl bg-emerald-50 text-emerald-800 text-xs border border-emerald-100 flex gap-3">
-                    <i class="fa-solid fa-circle-check text-lg"></i>
-                    <div><b>Nivel Clínico Estable:</b> Los rangos metabólicos evaluados por el algoritmo se encuentran dentro de las metas seguras fijadas por el MINSA.</div>
+                    <i class="fa-solid fa-circle-check text-lg shrink-0"></i>
+                    <div>
+                        <b>Nivel Clínico Estable:</b> Los rangos metabólicos evaluados por el algoritmo se encuentran dentro de las metas seguras fijadas por el MINSA. No hay riesgo inmediato.
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <script>
-        let trim = 2; let food = 'lentejas';
-        const db = {
-            lentejas: { title: 'Lentejas con Pescado Frito', icon: '🍛', iron: '8.9 mg', cal: '540 kcal', gi: 'Bajo (35)', sem: 'Adecuado', adv: 'Excelente fuente de hierro hemínico y proteínas, ideal para prevenir anemia.' },
-            torta: { title: 'Tarta Dulce con Azúcar', icon: '🍰', iron: '0.4 mg', cal: '490 kcal', gi: 'Alto (85)', sem: 'Inadecuado', adv: 'Alerta: Elevado índice glucémico. Incrementa sustancialmente el riesgo de picos de glucemia gestacional.' }
-        };
-        function simFood(type) { food = type; document.getElementById('scanner-visual').textContent = db[type].icon; updateUI(); }
-        function changeTrim(t) { trim = t; [1,2,3].forEach(i => document.getElementById(`b${i}`).className = i===t ? "py-1 text-xs font-bold rounded-md bg-brand-600 text-white" : "py-1 text-xs font-bold rounded-md bg-slate-800 text-slate-400"); updateUI(); }
-        function updateUI() {
-            document.getElementById('f-title').textContent = db[food].title;
-            document.getElementById('f-iron').textContent = db[food].iron;
-            document.getElementById('f-cal').textContent = db[food].cal;
-            document.getElementById('f-gi').textContent = db[food].gi;
-            document.getElementById('f-sem').textContent = db[food].sem;
-            document.getElementById('f-sem').className = `px-3 py-1 rounded-full font-bold text-xs ${food==='lentejas'?'bg-emerald-100 text-emerald-800':'bg-rose-100 text-rose-800'}`;
-            document.getElementById('f-advise').textContent = `[Trimestre ${trim}] — ${db[food].adv}`;
-        }
-        function calcAlert() {
-            let g = document.getElementById('s-gl').value; document.getElementById('v-gl').textContent = g + ' mg/dL';
-            let box = document.getElementById('alert-box');
-            if(g >= 140) {
-                box.className = "p-4 rounded-xl bg-rose-50 text-rose-800 text-xs border border-rose-100 flex gap-3";
-                box.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-lg"></i><div><b>ALERTA DE RIESGO:</b> Valores de glucosa elevados compatibles con criterios de screening para diabetes gestacional. Se sugiere interconsulta médica inmediata.</div>';
-            } else {
-                box.className = "p-4 rounded-xl bg-emerald-50 text-emerald-800 text-xs border border-emerald-100 flex gap-3";
-                box.innerHTML = '<i class="fa-solid fa-circle-check text-lg"></i><div><b>Nivel Clínico Estable:</b> Los rangos metabólicos evaluados por el algoritmo se encuentran dentro de las metas seguras fijadas por el MINSA.</div>';
-            }
-        }
-    </script>
+    <footer class="bg-slate-900 text-slate-500 text-center py-6 text-xs border-t border-slate-800 mt-20">
+        &copy; 2026 QhaliMama IA. Proyecto Científico de la Universidad Privada del Norte. Cajamarca, Perú.
+    </footer>
+
+    <!-- SDK de interacción externa -->
+    <script src="script.js"></script>
 </body>
 </html>
