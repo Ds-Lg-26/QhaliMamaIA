@@ -18,7 +18,55 @@
         }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Estilos Integrados para garantizar el funcionamiento en el Preview de Canvas */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Poppins', 'Inter', sans-serif;
+        }
+
+        .gradient-bg {
+            background: radial-gradient(circle at 10% 20%, rgba(20, 184, 166, 0.12) 0%, rgba(219, 39, 119, 0.04) 90%);
+        }
+
+        .glow-btn:hover {
+            box-shadow: 0 0 20px rgba(20, 184, 166, 0.4);
+        }
+
+        .scanning-line {
+            animation: scan 2.5s ease-in-out infinite;
+        }
+
+        @keyframes scan {
+            0%, 100% { top: 0%; }
+            50% { top: 100%; }
+        }
+
+        .pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: .85; transform: scale(1.02); }
+        }
+
+        /* Spinner de Carga de IA */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #14b8a6;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased">
 
@@ -225,7 +273,364 @@
         &copy; 2026 QhaliMama IA. Proyecto Científico de la Universidad Privada del Norte. Cajamarca, Perú.
     </footer>
 
-    <!-- SDK de interacción externa -->
-    <script src="script.js"></script>
+    <!-- LÓGICA DE PROGRAMACIÓN INTEGRADA PARA EVITAR REFERENCIAS NULAS EN CANVAS -->
+    <script>
+        const apiKey = "";
+        let selectedTrimestre = 2; 
+        let base64ImageForAnalysis = null;
+        let localMediaStream = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const fileInput = document.getElementById('food-image-input');
+            if (fileInput) {
+                fileInput.addEventListener('change', handleImageSelection);
+            }
+        });
+
+        function showNotification(text, type = "error") {
+            const bar = document.getElementById('notification-bar');
+            const icon = document.getElementById('notification-icon');
+            const txtNode = document.getElementById('notification-text');
+
+            if (!bar || !icon || !txtNode) return;
+
+            bar.classList.remove('hidden', 'bg-rose-50', 'text-rose-800', 'border-rose-100', 'bg-amber-50', 'text-amber-800', 'border-amber-100', 'border');
+            
+            if (type === "error") {
+                bar.className = "max-w-3xl mx-auto mb-6 p-4 rounded-xl text-xs flex items-center gap-3 shadow-sm transition-all duration-300 bg-rose-50 text-rose-800 border border-rose-100 z-50";
+                icon.className = "fa-solid fa-circle-exclamation text-rose-600 text-base";
+            } else {
+                bar.className = "max-w-3xl mx-auto mb-6 p-4 rounded-xl text-xs flex items-center gap-3 shadow-sm transition-all duration-300 bg-amber-50 text-amber-800 border border-amber-100 z-50";
+                icon.className = "fa-solid fa-bell text-amber-600 text-base";
+            }
+
+            txtNode.textContent = text;
+            
+            setTimeout(() => {
+                bar.classList.add('hidden');
+            }, 6000);
+        }
+
+        async function startCameraStream() {
+            stopCameraStream();
+
+            const video = document.getElementById('camera-stream');
+            const preview = document.getElementById('image-preview');
+            const placeholder = document.getElementById('upload-placeholder');
+            const closeBtn = document.getElementById('close-camera-btn');
+            const captureBtn = document.getElementById('btn-capture-shot');
+            const frame = document.getElementById('scanner-frame');
+            const badgeStatus = document.getElementById('camera-status-badge');
+
+            if (!video) return;
+
+            try {
+                const constraints = {
+                    video: {
+                        facingMode: { ideal: "environment" },
+                        width: { ideal: 640 },
+                        height: { ideal: 640 }
+                    },
+                    audio: false
+                };
+
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                localMediaStream = stream;
+                video.srcObject = stream;
+                
+                video.classList.remove('hidden');
+                preview.classList.add('hidden');
+                placeholder.classList.add('hidden');
+                closeBtn.classList.remove('hidden');
+                captureBtn.classList.remove('hidden');
+                frame.classList.remove('hidden');
+                
+                if (badgeStatus) {
+                    badgeStatus.textContent = "CÁMARA EN VIVO";
+                    badgeStatus.className = "bg-accent-medium px-3 py-1 rounded-full font-semibold uppercase animate-pulse text-white";
+                }
+            } catch (err) {
+                console.error("Error al acceder a la cámara nativa: ", err);
+                showNotification("No pudimos iniciar el visor de cámara en vivo en la web. Prueba el botón 'Subir Archivo' para usar la app de cámara nativa de tu celular.", "warning");
+            }
+        }
+
+        function stopCameraStream() {
+            if (localMediaStream) {
+                localMediaStream.getTracks().forEach(track => track.stop());
+                localMediaStream = null;
+            }
+
+            const video = document.getElementById('camera-stream');
+            const closeBtn = document.getElementById('close-camera-btn');
+            const captureBtn = document.getElementById('btn-capture-shot');
+            const frame = document.getElementById('scanner-frame');
+            const placeholder = document.getElementById('upload-placeholder');
+            const badgeStatus = document.getElementById('camera-status-badge');
+
+            if (video) video.classList.add('hidden');
+            if (closeBtn) closeBtn.classList.add('hidden');
+            if (captureBtn) captureBtn.classList.add('hidden');
+            if (frame) frame.classList.add('hidden');
+            
+            const preview = document.getElementById('image-preview');
+            if (preview && preview.classList.contains('hidden') && placeholder) {
+                placeholder.classList.remove('hidden');
+            }
+
+            if (badgeStatus) {
+                badgeStatus.textContent = "Estado: Listo";
+                badgeStatus.className = "bg-brand-600 px-3 py-1 rounded-full font-semibold uppercase animate-pulse text-white";
+            }
+        }
+
+        function capturePhotoFromStream() {
+            const video = document.getElementById('camera-stream');
+            const canvas = document.getElementById('canvas-capture');
+            const preview = document.getElementById('image-preview');
+
+            if (!video || !canvas || !preview || !localMediaStream) return;
+
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 640;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const dataUrl = canvas.toDataURL('image/png');
+            preview.src = dataUrl;
+            preview.classList.remove('hidden');
+
+            const base64Data = dataUrl.split(',')[1];
+            base64ImageForAnalysis = base64Data;
+
+            stopCameraStream();
+            analizarComidaConIA(base64Data, "image/png");
+        }
+
+        function triggerFileSelect() {
+            stopCameraStream();
+            const fileInput = document.getElementById('food-image-input');
+            if (fileInput) fileInput.click();
+        }
+
+        function handleImageSelection(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('image-preview');
+                const placeholder = document.getElementById('upload-placeholder');
+                
+                if (preview && placeholder) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                }
+
+                const base64Data = e.target.result.split(',')[1];
+                base64ImageForAnalysis = base64Data;
+
+                analizarComidaConIA(base64Data, file.type);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function changeTrimestre(trimestre) {
+            selectedTrimestre = trimestre;
+            
+            [1, 2, 3].forEach(i => {
+                const btn = document.getElementById(`btn-t${i}`);
+                if (btn) {
+                    btn.className = i === trimestre 
+                        ? "py-1 text-xs font-bold rounded-md bg-brand-600 text-white" 
+                        : "py-1 text-xs font-bold rounded-md bg-slate-800 text-slate-400";
+                }
+            });
+
+            if (base64ImageForAnalysis) {
+                analizarComidaConIA(base64ImageForAnalysis, "image/png");
+            }
+        }
+
+        async function analizarComidaConIA(base64Data, mimeType) {
+            toggleLoadingState(true);
+
+            const systemPrompt = `Actúa como el experto asistente médico nutricional del proyecto "QhaliMama" (Prevención de anemia y diabetes gestacional de la UPN en Cajamarca). 
+            Debes identificar de forma precisa el plato de comida en la imagen. Evalúa sus propiedades para una gestante que se encuentra en su ${selectedTrimestre}° trimestre del embarazo.
+            Genera un informe detallado con:
+            - Calorías estimadas del plato (kcal).
+            - Hierro estimado (mg), indicando si es alto o bajo. Recuerda que la prevención de anemia requiere hierro, idealmente hemínico.
+            - Ácido Fólico estimado (µg).
+            - Índice Glucémico (Bajo, Medio o Alto con su rango estimado).
+            - Semáforo nutricional para el trimestre de la gestante: "Verde" (Saludable y adecuado), "Amarillo" (Consumo moderado o mejorable), o "Rojo" (Alto riesgo por glucemia o inadecuado en el embarazo).
+            - Un consejo clínico y obstétrico adaptado a la paciente según la guía del MINSA Perú y la OMS para su trimestre seleccionado.`;
+
+            const requestPayload = {
+                contents: [
+                    {
+                        parts: [
+                            { 
+                                text: `Identifica este plato de comida para una gestante en el ${selectedTrimestre}° trimestre. Genera los valores estimados de nutrientes y redacta la recomendación obstétrica con terminología científica pero entendible para la madre.` 
+                            },
+                            {
+                                inlineData: {
+                                    mimeType: mimeType || "image/png",
+                                    data: base64Data
+                                }
+                            }
+                        ]
+                    }
+                ],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            title: { type: "STRING" },
+                            calories: { type: "STRING" },
+                            iron: { type: "STRING" },
+                            folicAcid: { type: "STRING" },
+                            glycemicIndex: { type: "STRING" },
+                            semaforo: { type: "STRING" },
+                            semaforoReason: { type: "STRING" },
+                            advice: { type: "STRING" }
+                        },
+                        required: ["title", "calories", "iron", "folicAcid", "glycemicIndex", "semaforo", "semaforoReason", "advice"]
+                    }
+                }
+            };
+
+            const endpointUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            try {
+                const responseText = await callApiWithExponentialBackoff(endpointUrl, requestPayload);
+                const result = JSON.parse(responseText);
+                renderReporteIA(result);
+            } catch (error) {
+                showNotification("No pudimos contactar con el motor de IA en este momento. Por favor verifica tu conexión e inténtalo de nuevo.");
+                toggleLoadingState(false);
+            }
+        }
+
+        async function callApiWithExponentialBackoff(url, payload) {
+            const maxRetries = 5;
+            let delay = 1000;
+
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        const textOutput = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                        if (textOutput) return textOutput;
+                        throw new Error("Respuesta de la API mal formada.");
+                    }
+                } catch (e) {}
+
+                await new Promise(resolve => setTimeout(resolve, delay));
+                delay *= 2;
+            }
+
+            throw new Error("Se superaron todos los intentos de conexión.");
+        }
+
+        function renderReporteIA(data) {
+            toggleLoadingState(false);
+
+            document.getElementById('report-title').textContent = data.title;
+            document.getElementById('report-calories').textContent = data.calories;
+            document.getElementById('report-iron').textContent = data.iron;
+            document.getElementById('report-folic').textContent = data.folicAcid;
+            document.getElementById('report-gi').textContent = data.glycemicIndex;
+            document.getElementById('report-advice').textContent = data.advice;
+
+            const semaforoEl = document.getElementById('report-semaforo');
+            if (semaforoEl) {
+                const semTag = data.semaforo.toLowerCase();
+                semaforoEl.textContent = `${data.semaforo} (${data.semaforoReason})`;
+                
+                if (semTag.includes('verde') || semTag.includes('adecuado') || semTag.includes('buen')) {
+                    semaforoEl.className = "px-3.5 py-1.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs uppercase tracking-wide";
+                } else if (semTag.includes('amarillo') || semTag.includes('moderar') || semTag.includes('mejor')) {
+                    semaforoEl.className = "px-3.5 py-1.5 rounded-full bg-amber-100 text-amber-800 font-bold text-xs uppercase tracking-wide";
+                } else {
+                    semaforoEl.className = "px-3.5 py-1.5 rounded-full bg-rose-100 text-rose-800 font-bold text-xs uppercase tracking-wide";
+                }
+            }
+        }
+
+        function toggleLoadingState(isLoading) {
+            const line = document.getElementById('laser-line');
+            const overlay = document.getElementById('loading-overlay');
+            if (line && overlay) {
+                if (isLoading) {
+                    line.classList.remove('hidden');
+                    overlay.classList.remove('hidden');
+                } else {
+                    line.classList.add('hidden');
+                    overlay.classList.add('hidden');
+                }
+            }
+        }
+
+        function demoPlato(tipo) {
+            let base64Mock = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+            
+            const preview = document.getElementById('image-preview');
+            if (preview) {
+                if (tipo === 'lentejas') {
+                    preview.src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=300";
+                } else {
+                    preview.src = "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&q=80&w=300";
+                }
+                preview.classList.remove('hidden');
+            }
+
+            const placeholder = document.getElementById('upload-placeholder');
+            if (placeholder) placeholder.classList.add('hidden');
+
+            base64ImageForAnalysis = base64Mock;
+            analizarComidaConIA(base64Mock, "image/png");
+        }
+
+        function calcAlert() {
+            const slider = document.getElementById('s-gl');
+            const txtValue = document.getElementById('v-gl');
+            const boxAlerta = document.getElementById('alert-box');
+            
+            if (!slider || !boxAlerta || !txtValue) return;
+
+            let glucosa = slider.value;
+            txtValue.textContent = `${glucosa} mg/dL`;
+            
+            if (glucosa >= 140) {
+                boxAlerta.className = "p-4 rounded-xl bg-rose-50 text-rose-800 text-xs border border-rose-100 flex gap-3";
+                boxAlerta.innerHTML = `
+                    <i class="fa-solid fa-triangle-exclamation text-lg shrink-0"></i>
+                    <div>
+                        <b>ALERTA DE RIESGO DE GLUCEMIA:</b> Valores de glucosa elevados (${glucosa} mg/dL). Compatible con criterios de screening para diabetes gestacional. El sistema notificará de forma segura al obstetra a cargo en Cajamarca. Se sugiere evitar harinas refinadas y carbohidratos de alto índice glucémico.
+                    </div>
+                `;
+            } else {
+                boxAlerta.className = "p-4 rounded-xl bg-emerald-50 text-emerald-800 text-xs border border-emerald-100 flex gap-3";
+                boxAlerta.innerHTML = `
+                    <i class="fa-solid fa-circle-check text-lg shrink-0"></i>
+                    <div>
+                        <b>Nivel Clínico Estable:</b> Los rangos metabólicos de glucosa (${glucosa} mg/dL) evaluados se encuentran dentro de las metas seguras fijadas por la OMS. No hay riesgo de diabetes gestacional activo.
+                    </div>
+                `;
+            }
+        }
+    </script>
 </body>
 </html>
