@@ -46,11 +46,11 @@
     <main class="pt-32 pb-20 max-w-6xl mx-auto px-4 sm:px-6">
         <div class="text-center mb-10">
             <span class="text-brand-600 font-bold tracking-widest text-xs uppercase block mb-1">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> Visión por Computadora Real
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Visión por Computadora Activa
             </span>
             <h2 class="text-3xl font-extrabold text-slate-900">Diagnóstico Nutricional por Imagen</h2>
             <p class="text-slate-500 text-sm mt-2 max-w-2xl mx-auto">
-                Sube una imagen o toma una foto de tu desayuno, almuerzo o cena. Nuestro algoritmo clínico QhaliMama evaluará los macronutrientes, el índice glucémico y la idoneidad para tu trimestre de gestación.
+                Toma una foto en tiempo real con tu cámara o sube un archivo de tu comida. Nuestro algoritmo de Inteligencia Artificial evaluará los micronutrientes, el índice glucémico y la idoneidad para tu trimestre de gestación.
             </p>
         </div>
 
@@ -63,40 +63,71 @@
         <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden grid grid-cols-1 lg:grid-cols-12 mb-12">
             
             <!-- Columna Izquierda: Escáner y Carga de Fotos -->
-            <div class="lg:col-span-5 bg-slate-900 p-6 flex flex-col justify-between min-h-[420px] relative">
-                <div class="flex items-center justify-between text-white text-[11px]">
-                    <span class="bg-brand-600 px-3 py-1 rounded-full font-semibold uppercase animate-pulse">Cámara / Archivo</span>
+            <div class="lg:col-span-5 bg-slate-900 p-6 flex flex-col justify-between min-h-[460px] relative">
+                <div class="flex items-center justify-between text-white text-[11px] mb-2 z-10">
+                    <span class="bg-brand-600 px-3 py-1 rounded-full font-semibold uppercase animate-pulse" id="camera-status-badge">Estado: Listo</span>
                     <span class="text-slate-400"><i class="fa-solid fa-brain text-brand-500 mr-1 animate-pulse"></i> Red Neuronal Lista</span>
                 </div>
 
-                <!-- Contenedor Visual de la Imagen -->
-                <div class="relative my-6 mx-auto w-full max-w-[240px] aspect-square rounded-2xl overflow-hidden border-2 border-brand-500 bg-slate-800 flex flex-col items-center justify-center text-center p-4">
-                    <img id="image-preview" src="" alt="Vista previa de comida" class="absolute inset-0 w-full h-full object-cover hidden z-0">
+                <!-- Contenedor Visual de la Imagen / Cámara en Vivo -->
+                <div class="relative my-4 mx-auto w-full max-w-[260px] aspect-square rounded-2xl overflow-hidden border-2 border-brand-500 bg-slate-800 flex flex-col items-center justify-center text-center">
                     
-                    <div id="upload-placeholder" class="z-10 space-y-3 cursor-pointer">
+                    <!-- 1. Imagen Capturada / Cargada -->
+                    <img id="image-preview" src="" alt="Vista previa de comida" class="absolute inset-0 w-full h-full object-cover hidden z-10">
+                    
+                    <!-- 2. Video de Cámara en Vivo -->
+                    <video id="camera-stream" autoplay playsinline class="absolute inset-0 w-full h-full object-cover hidden z-10"></video>
+                    
+                    <!-- Canvas oculto para capturar frames del video -->
+                    <canvas id="canvas-capture" class="hidden"></canvas>
+                    
+                    <!-- Guía de encuadre translúcida para centrar la comida (solo se muestra con la cámara activa o escaneando) -->
+                    <div id="scanner-frame" class="absolute inset-4 border-2 border-dashed border-brand-500/60 rounded-xl pointer-events-none hidden z-20">
+                        <div class="absolute top-1/2 left-0 w-full h-[1px] bg-brand-500/20"></div>
+                        <div class="absolute left-1/2 top-0 h-full w-[1px] bg-brand-500/20"></div>
+                    </div>
+
+                    <!-- Botón para cerrar stream de cámara activa -->
+                    <button id="close-camera-btn" onclick="stopCameraStream()" class="absolute top-2 right-2 p-2 bg-slate-950/80 hover:bg-rose-600 text-white rounded-full transition hidden z-30 shadow" title="Cerrar Cámara">
+                        <i class="fa-solid fa-xmark text-sm"></i>
+                    </button>
+
+                    <!-- Placeholder por defecto -->
+                    <div id="upload-placeholder" onclick="triggerFileSelect()" class="z-0 space-y-3 cursor-pointer p-4">
                         <div class="w-14 h-14 rounded-full bg-slate-700/50 flex items-center justify-center text-brand-500 mx-auto border border-brand-500/30">
-                            <i class="fa-solid fa-camera text-2xl"></i>
+                            <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
                         </div>
-                        <p class="text-xs text-slate-300 font-medium">Haz clic para tomar foto o seleccionar archivo</p>
+                        <p class="text-xs text-slate-300 font-medium">Haz clic para subir un archivo de imagen</p>
                     </div>
 
                     <!-- Línea de escaneo láser (Visible durante procesamiento) -->
-                    <div id="laser-line" class="absolute left-0 w-full h-1 bg-brand-500 shadow-[0_0_15px_#14b8a6] scanning-line hidden z-10"></div>
+                    <div id="laser-line" class="absolute left-0 w-full h-1 bg-brand-500 shadow-[0_0_15px_#14b8a6] scanning-line hidden z-20"></div>
                     
                     <!-- Overlay de carga -->
-                    <div id="loading-overlay" class="absolute inset-0 bg-slate-950/80 flex flex-col items-center justify-center gap-3 hidden z-20">
+                    <div id="loading-overlay" class="absolute inset-0 bg-slate-950/85 flex flex-col items-center justify-center gap-3 hidden z-30">
                         <div class="spinner"></div>
-                        <span class="text-[11px] text-slate-300 font-bold uppercase tracking-wider animate-pulse">Analizando plato con IA...</span>
+                        <span class="text-[11px] text-slate-300 font-bold uppercase tracking-wider animate-pulse">Analizando con IA QhaliMama...</span>
                     </div>
                 </div>
 
-                <!-- Input File oculto para activar cámara/archivos -->
+                <!-- Input File oculto para activar archivos o cámara nativa en móviles -->
                 <input type="file" id="food-image-input" accept="image/*" class="hidden">
 
                 <!-- Botones de Acción de Imagen -->
-                <div class="space-y-3">
-                    <button onclick="triggerFileSelect()" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-upload"></i> Seleccionar o Tomar Foto
+                <div class="space-y-3 z-10">
+                    <!-- Fila de selectores de cámara -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <button id="btn-open-camera" onclick="startCameraStream()" class="py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow">
+                            <i class="fa-solid fa-camera"></i> Usar Cámara
+                        </button>
+                        <button id="btn-file-select" onclick="triggerFileSelect()" class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border border-slate-700">
+                            <i class="fa-solid fa-folder-open"></i> Subir Archivo
+                        </button>
+                    </div>
+
+                    <!-- Botón exclusivo de captura de stream en vivo -->
+                    <button id="btn-capture-shot" onclick="capturePhotoFromStream()" class="w-full py-2.5 bg-accent-medium hover:bg-accent-dark text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 hidden shadow-lg animate-bounce">
+                        <i class="fa-solid fa-circle-dot text-lg"></i> ¡Capturar Plato de Comida!
                     </button>
                     
                     <div class="space-y-1">
@@ -115,7 +146,7 @@
                 <div>
                     <div class="flex flex-wrap justify-between items-start border-b pb-4 gap-2">
                         <div>
-                            <h3 id="report-title" class="text-xl sm:text-2xl font-bold text-slate-900">Sube una foto para iniciar</h3>
+                            <h3 id="report-title" class="text-xl sm:text-2xl font-bold text-slate-900">Sube o toma una foto</h3>
                             <span class="text-xs text-slate-400 block mt-1"><i class="fa-solid fa-robot"></i> Diagnóstico estructurado basado en OMS / MINSA Perú</span>
                         </div>
                         <span id="report-semaforo" class="px-3.5 py-1.5 rounded-full bg-slate-100 text-slate-500 font-bold text-xs uppercase tracking-wide">
@@ -147,20 +178,20 @@
                     <div class="p-4 rounded-xl bg-brand-50/50 border border-brand-100/60 leading-relaxed">
                         <span class="text-[11px] font-bold text-brand-700 uppercase block mb-1"><i class="fa-solid fa-user-doctor"></i> Recomendación Obstétrica QhaliMama:</span>
                         <p id="report-advice" class="text-xs text-slate-600">
-                            El análisis nutricional en tiempo real está listo para procesar tus alimentos de la canasta familiar y platos preparados. Sube una foto para calcular el balance ideal según tu semana de gestación.
+                            El análisis nutricional en tiempo real está listo para procesar tus alimentos de la canasta familiar y platos preparados. Usa tu cámara para capturar tu desayuno, almuerzo o cena.
                         </p>
                     </div>
                 </div>
 
                 <!-- Sección de Platos Preestablecidos de Demostración Local -->
                 <div class="mt-8 pt-4 border-t text-xs">
-                    <span class="block text-slate-400 mb-2 font-semibold">¿No tienes fotos a la mano? Prueba con estas de muestra:</span>
+                    <span class="block text-slate-400 mb-2 font-semibold">¿No tienes platos listos? Prueba una simulación:</span>
                     <div class="flex flex-wrap gap-2">
                         <button onclick="demoPlato('lentejas')" class="px-3 py-2 bg-slate-100 hover:bg-brand-50 hover:text-brand-700 rounded-lg font-medium transition flex items-center gap-1.5">
-                            🍛 Lentejas con Pescado (Hierro Alto)
+                            Subir Lentejas de Muestra 🍛
                         </button>
                         <button onclick="demoPlato('dulce')" class="px-3 py-2 bg-slate-100 hover:bg-brand-50 hover:text-brand-700 rounded-lg font-medium transition flex items-center gap-1.5">
-                            🍰 Postre Glaseado (Riesgo Glucemia)
+                            Subir Postre de Muestra 🍰
                         </button>
                     </div>
                 </div>
