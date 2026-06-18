@@ -19,7 +19,6 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Estilos Integrados para garantizar el funcionamiento en el Preview de Canvas */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
 
         body {
@@ -98,7 +97,7 @@
             </span>
             <h2 class="text-3xl font-extrabold text-slate-900">Diagnóstico Nutricional por Imagen</h2>
             <p class="text-slate-500 text-sm mt-2 max-w-2xl mx-auto">
-                Toma una foto en tiempo real con tu cámara o sube un archivo de tu comida. Nuestro algoritmo de Inteligencia Artificial evaluará los micronutrientes, el índice glucémico y la idoneidad para tu trimestre de gestación.
+                Toma una foto en tiempo real con tu cámara o sube un archivo de tu comida. Nuestro algoritmo de Inteligencia Artificial desglosará cada ingrediente del plato para evaluar sus micronutrientes y el índice glucémico adecuado para tu gestación.
             </p>
         </div>
 
@@ -189,36 +188,51 @@
                 </div>
             </div>
 
-            <!-- Columna Derecha: Reporte de IA -->
-            <div class="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-between">
-                <div>
+            <!-- Columna Derecha: Reporte de IA con Desglose de Productos -->
+            <div class="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto">
+                <div class="space-y-6">
                     <div class="flex flex-wrap justify-between items-start border-b pb-4 gap-2">
                         <div>
                             <h3 id="report-title" class="text-xl sm:text-2xl font-bold text-slate-900">Sube o toma una foto</h3>
-                            <span class="text-xs text-slate-400 block mt-1"><i class="fa-solid fa-robot"></i> Diagnóstico estructurado basado en OMS / MINSA Perú</span>
+                            <span class="text-xs text-slate-400 block mt-1"><i class="fa-solid fa-robot"></i> Diagnóstico por ingrediente basado en OMS / MINSA Perú</span>
                         </div>
                         <span id="report-semaforo" class="px-3.5 py-1.5 rounded-full bg-slate-100 text-slate-500 font-bold text-xs uppercase tracking-wide">
                             En Espera
                         </span>
                     </div>
 
-                    <!-- Rejilla de Indicadores de Nutrientes -->
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 my-6 text-center">
-                        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                            <span class="text-[10px] text-slate-400 block uppercase font-medium">Calorías Est.</span>
-                            <span id="report-calories" class="text-base font-bold text-slate-800">-- kcal</span>
-                        </div>
-                        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                            <span class="text-[10px] text-slate-400 block uppercase font-medium">Hierro (Fe)</span>
-                            <span id="report-iron" class="text-base font-bold text-slate-800">-- mg</span>
-                        </div>
-                        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                            <span class="text-[10px] text-slate-400 block uppercase font-medium">Ácido Fólico</span>
-                            <span id="report-folic" class="text-base font-bold text-slate-800">-- µg</span>
-                        </div>
-                        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                            <span class="text-[10px] text-slate-400 block uppercase font-medium">Índice Glucémico</span>
-                            <span id="report-gi" class="text-base font-bold text-slate-800">--</span>
+                    <!-- NUEVO PANEL: Desglose de Productos Identificados -->
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
+                            <i class="fa-solid fa-list-check"></i> Ingredientes Detectados del Plato
+                        </h4>
+                        <div class="overflow-hidden border border-slate-100 rounded-xl">
+                            <table class="min-w-full divide-y divide-slate-100 text-left text-xs">
+                                <thead class="bg-slate-50 font-semibold text-slate-500">
+                                    <tr>
+                                        <th class="p-3">Ingrediente / Producto</th>
+                                        <th class="p-3 text-center">Calorías</th>
+                                        <th class="p-3 text-center">Hierro</th>
+                                        <th class="p-3 text-center">Ac. Fólico</th>
+                                        <th class="p-3 text-center">I. Glucémico</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="report-ingredients-table" class="divide-y divide-slate-100 text-slate-600">
+                                    <!-- Dinámico por JS -->
+                                    <tr>
+                                        <td colspan="5" class="p-4 text-center text-slate-400 italic">Ningún alimento analizado aún</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="bg-slate-50 font-bold text-slate-900 border-t border-slate-200">
+                                    <tr id="report-totals-row">
+                                        <td class="p-3">Total Estimado</td>
+                                        <td id="report-calories" class="p-3 text-center">-- kcal</td>
+                                        <td id="report-iron" class="p-3 text-center">-- mg</td>
+                                        <td id="report-folic" class="p-3 text-center">-- µg</td>
+                                        <td id="report-gi" class="p-3 text-center">--</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
                         </div>
                     </div>
 
@@ -226,7 +240,7 @@
                     <div class="p-4 rounded-xl bg-brand-50/50 border border-brand-100/60 leading-relaxed">
                         <span class="text-[11px] font-bold text-brand-700 uppercase block mb-1"><i class="fa-solid fa-user-doctor"></i> Recomendación Obstétrica QhaliMama:</span>
                         <p id="report-advice" class="text-xs text-slate-600">
-                            El análisis nutricional en tiempo real está listo para procesar tus alimentos de la canasta familiar y platos preparados. Usa tu cámara para capturar tu desayuno, almuerzo o cena.
+                            El análisis nutricional por ingredientes está listo para procesar tus alimentos. Usa tu cámara para capturar tu almuerzo, desayuno o cena.
                         </p>
                     </div>
                 </div>
@@ -458,21 +472,34 @@
             toggleLoadingState(true);
 
             const systemPrompt = `Actúa como el experto asistente médico nutricional del proyecto "QhaliMama" (Prevención de anemia y diabetes gestacional de la UPN en Cajamarca). 
-            Debes identificar de forma precisa el plato de comida en la imagen. Evalúa sus propiedades para una gestante que se encuentra en su ${selectedTrimestre}° trimestre del embarazo.
-            Genera un informe detallado con:
-            - Calorías estimadas del plato (kcal).
-            - Hierro estimado (mg), indicando si es alto o bajo. Recuerda que la prevención de anemia requiere hierro, idealmente hemínico.
-            - Ácido Fólico estimado (µg).
-            - Índice Glucémico (Bajo, Medio o Alto con su rango estimado).
-            - Semáforo nutricional para el trimestre de la gestante: "Verde" (Saludable y adecuado), "Amarillo" (Consumo moderado o mejorable), o "Rojo" (Alto riesgo por glucemia o inadecuado en el embarazo).
-            - Un consejo clínico y obstétrico adaptado a la paciente según la guía del MINSA Perú y la OMS para su trimestre seleccionado.`;
+            Debes analizar la imagen del plato de comida y desglosar cada uno de los productos o ingredientes de manera individual. 
+            Evalúa sus propiedades para una gestante que se encuentra en su ${selectedTrimestre}° trimestre del embarazo.
+            
+            Debes responder estrictamente en formato JSON utilizando el esquema provisto.
+            - "title": Nombre genérico o título del plato completo.
+            - "ingredients": Una lista de objetos, donde cada objeto representa un ingrediente detectado:
+              * "name": Nombre del ingrediente (Ej: "Arroz blanco", "Lentejas cocidas", "Pescado frito").
+              * "calories": Calorías estimadas para la porción que se observa de ese ingrediente (Ej: "120"). Solo el número en formato string.
+              * "iron": Hierro estimado (Ej: "1.2"). Solo el número en formato string.
+              * "folicAcid": Ácido Fólico estimado (Ej: "15"). Solo el número en formato string.
+              * "glycemicIndex": Índice Glucémico estimado del ingrediente (Ej: "Bajo (20)", "Alto (80)").
+            - "totalCalories": Suma total estimada de calorías del plato (Ej: "540"). Solo el número.
+            - "totalIron": Suma total estimada de hierro del plato (Ej: "8.9"). Solo el número.
+            - "totalFolic": Suma total estimada de ácido fólico del plato (Ej: "45"). Solo el número.
+            - "glycemicIndexAverage": Índice glucémico promedio o general del plato ("Bajo", "Medio" o "Alto").
+            - "semaforo": "Verde" (Saludable y adecuado), "Amarillo" (Consumo moderado o mejorable), o "Rojo" (Alto riesgo por glucemia o inadecuado en el embarazo).
+            - "semaforoReason": Justificación breve del semáforo.
+            - "advice": Un consejo clínico y obstétrico adaptado a la paciente según la guía del MINSA Perú y la OMS para su trimestre seleccionado:
+              * 1er Trimestre: Requerimiento calórico sin incremento adicional (+0 kcal), alta demanda de ácido fólico y prevención de malestares iniciales.
+              * 2do Trimestre: Mayor demanda de hierro y incremento calórico moderado (+340 kcal/día adicionales).
+              * 3er Trimestre: Máximo requerimiento energético (+450 kcal/día adicionales) e importancia de evitar grasas saturadas y picos de azúcar para descartar diabetes gestacional tardía.`;
 
             const requestPayload = {
                 contents: [
                     {
                         parts: [
                             { 
-                                text: `Identifica este plato de comida para una gestante en el ${selectedTrimestre}° trimestre. Genera los valores estimados de nutrientes y redacta la recomendación obstétrica con terminología científica pero entendible para la madre.` 
+                                text: `Analiza esta imagen y desglosa cada producto e ingrediente que compone el plato para una gestante en el ${selectedTrimestre}° trimestre.` 
                             },
                             {
                                 inlineData: {
@@ -492,15 +519,29 @@
                         type: "OBJECT",
                         properties: {
                             title: { type: "STRING" },
-                            calories: { type: "STRING" },
-                            iron: { type: "STRING" },
-                            folicAcid: { type: "STRING" },
-                            glycemicIndex: { type: "STRING" },
+                            ingredients: {
+                                type: "ARRAY",
+                                items: {
+                                    type: "OBJECT",
+                                    properties: {
+                                        name: { type: "STRING" },
+                                        calories: { type: "STRING" },
+                                        iron: { type: "STRING" },
+                                        folicAcid: { type: "STRING" },
+                                        glycemicIndex: { type: "STRING" }
+                                    },
+                                    required: ["name", "calories", "iron", "folicAcid", "glycemicIndex"]
+                                }
+                            },
+                            totalCalories: { type: "STRING" },
+                            totalIron: { type: "STRING" },
+                            totalFolic: { type: "STRING" },
+                            glycemicIndexAverage: { type: "STRING" },
                             semaforo: { type: "STRING" },
                             semaforoReason: { type: "STRING" },
                             advice: { type: "STRING" }
                         },
-                        required: ["title", "calories", "iron", "folicAcid", "glycemicIndex", "semaforo", "semaforoReason", "advice"]
+                        required: ["title", "ingredients", "totalCalories", "totalIron", "totalFolic", "glycemicIndexAverage", "semaforo", "semaforoReason", "advice"]
                     }
                 }
             };
@@ -547,11 +588,33 @@
         function renderReporteIA(data) {
             toggleLoadingState(false);
 
+            // Título general
             document.getElementById('report-title').textContent = data.title;
-            document.getElementById('report-calories').textContent = data.calories;
-            document.getElementById('report-iron').textContent = data.iron;
-            document.getElementById('report-folic').textContent = data.folicAcid;
-            document.getElementById('report-gi').textContent = data.glycemicIndex;
+
+            // Desglose de tabla de ingredientes
+            const tableBody = document.getElementById('report-ingredients-table');
+            tableBody.innerHTML = ""; // Limpiar tabla previa
+
+            data.ingredients.forEach(item => {
+                const row = document.createElement('tr');
+                row.className = "hover:bg-slate-50 transition-colors";
+                row.innerHTML = `
+                    <td class="p-3 font-semibold text-slate-800">${item.name}</td>
+                    <td class="p-3 text-center">${item.calories} kcal</td>
+                    <td class="p-3 text-center text-brand-600 font-medium">${item.iron} mg</td>
+                    <td class="p-3 text-center">${item.folicAcid} µg</td>
+                    <td class="p-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] bg-slate-100 font-medium">${item.glycemicIndex}</span></td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Totales acumulados en el pie de la tabla
+            document.getElementById('report-calories').textContent = `${data.totalCalories} kcal`;
+            document.getElementById('report-iron').textContent = `${data.totalIron} mg`;
+            document.getElementById('report-folic').textContent = `${data.totalFolic} µg`;
+            document.getElementById('report-gi').textContent = data.glycemicIndexAverage;
+
+            // Recomendación y semáforo general
             document.getElementById('report-advice').textContent = data.advice;
 
             const semaforoEl = document.getElementById('report-semaforo');
@@ -584,23 +647,53 @@
         }
 
         function demoPlato(tipo) {
-            let base64Mock = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+            toggleLoadingState(true);
             
-            const preview = document.getElementById('image-preview');
-            if (preview) {
-                if (tipo === 'lentejas') {
-                    preview.src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=300";
-                } else {
-                    preview.src = "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&q=80&w=300";
-                }
-                preview.classList.remove('hidden');
+            // Simulación exacta para las demos preestablecidas
+            let mockData = {};
+            if (tipo === 'lentejas') {
+                document.getElementById('image-preview').src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=300";
+                mockData = {
+                    title: "Lentejas Guisadas con Pescado Frito",
+                    ingredients: [
+                        { name: "Pescado Frito (Bonito)", calories: "210", iron: "3.2", folicAcid: "5", glycemicIndex: "Bajo (0)" },
+                        { name: "Lentejas Guisadas", calories: "180", iron: "4.8", folicAcid: "30", glycemicIndex: "Bajo (25)" },
+                        { name: "Arroz Blanco", calories: "130", iron: "0.5", folicAcid: "8", glycemicIndex: "Alto (70)" },
+                        { name: "Ensalada Criolla", calories: "20", iron: "0.4", folicAcid: "2", glycemicIndex: "Bajo (15)" }
+                    ],
+                    totalCalories: "540",
+                    totalIron: "8.9",
+                    totalFolic: "45",
+                    glycemicIndexAverage: "Bajo (27)",
+                    semaforo: "Verde",
+                    semaforoReason: "Alimento rico en Hierro",
+                    advice: `[Trimestre ${selectedTrimestre}] — Excelente combinación de alimentos locales. El bonito aporta una dosis muy alta de hierro hemínico (fácil absorción) y grasas saludables (Omega-3), ideal para combatir la anemia ferropénica. El acompañamiento de lentejas incrementa la ingesta de folato y hierro no hemínico.`
+                };
+            } else {
+                document.getElementById('image-preview').src = "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&q=80&w=300";
+                mockData = {
+                    title: "Tarta Glaseada de Chocolate y Crema",
+                    ingredients: [
+                        { name: "Bizcocho Dulce", calories: "220", iron: "0.2", folicAcid: "1", glycemicIndex: "Alto (85)" },
+                        { name: "Crema de Manjarblanco", calories: "150", iron: "0.1", folicAcid: "1", glycemicIndex: "Alto (90)" },
+                        { name: "Cobertura de Chocolate", calories: "120", iron: "0.1", folicAcid: "1", glycemicIndex: "Medio (60)" }
+                    ],
+                    totalCalories: "490",
+                    totalIron: "0.4",
+                    totalFolic: "3",
+                    glycemicIndexAverage: "Alto (78)",
+                    semaforo: "Rojo",
+                    semaforoReason: "Riesgo de picos de Glucemia",
+                    advice: `[Trimestre ${selectedTrimestre}] — Alerta metabólica. Los ingredientes procesados y el exceso de sacarosa líquida generan una absorción de glucosa extremadamente veloz en sangre (Índice Glucémico de 78). Consumir estos alimentos incrementa significativamente el riesgo de diabetes gestacional y macrosomía fetal.`
+                };
             }
 
-            const placeholder = document.getElementById('upload-placeholder');
-            if (placeholder) placeholder.classList.add('hidden');
-
-            base64ImageForAnalysis = base64Mock;
-            analizarComidaConIA(base64Mock, "image/png");
+            document.getElementById('image-preview').classList.remove('hidden');
+            document.getElementById('upload-placeholder').classList.add('hidden');
+            
+            setTimeout(() => {
+                renderReporteIA(mockData);
+            }, 1500);
         }
 
         function calcAlert() {
